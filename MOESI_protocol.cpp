@@ -20,22 +20,22 @@ MOESI_protocol::~MOESI_protocol ()
 
 void MOESI_protocol::dump (void)
 {
-	const char *block_states[10] = {"X","I","IS","S","E","IM","SM","M","O","OM"};
+	const char *block_states[10] = {"X","I","S","E","M","O","IS","IM","SM","OM"};
 	fprintf (stderr, "MOESI_protocol - state: %s\n", block_states[state]);
 }
 
 void MOESI_protocol::process_cache_request (Mreq *request)
 {
 	switch (state) {
-		case MOESI_CACHE_I:  do_cache_I(request);  break;
-		case MOESI_CACHE_IS: do_cache_IS(request); break;
-		case MOESI_CACHE_S:  do_cache_S(request);  break;
-		case MOESI_CACHE_E:  do_cache_E(request);  break;
-		case MOESI_CACHE_IM: do_cache_IM(request); break;
-		case MOESI_CACHE_SM: do_cache_SM(request); break;
-		case MOESI_CACHE_M:  do_cache_M(request);  break;
-		case MOESI_CACHE_O:  do_cache_O(request);  break;
-		case MOESI_CACHE_OM: do_cache_OM(request); break;
+		case MOESI_CACHE_I:  do_cache_I(request); break;
+		case MOESI_CACHE_S:  do_cache_S(request); break;
+		case MOESI_CACHE_E:  do_cache_E(request); break;
+		case MOESI_CACHE_M:  do_cache_M(request); break;
+		case MOESI_CACHE_O:  do_cache_O(request); break;
+		case MOESI_CACHE_IS:
+		case MOESI_CACHE_IM:
+		case MOESI_CACHE_SM:
+		case MOESI_CACHE_OM: do_cache_X(request); break;
 		default:
 				     fatal_error ("Invalid Cache State for MOESI Protocol\n");
 	}
@@ -45,13 +45,13 @@ void MOESI_protocol::process_snoop_request (Mreq *request)
 {
 	switch (state) {
 		case MOESI_CACHE_I:  do_snoop_I(request);  break;
-		case MOESI_CACHE_IS: do_snoop_IS(request); break;
 		case MOESI_CACHE_S:  do_snoop_S(request);  break;
 		case MOESI_CACHE_E:  do_snoop_E(request);  break;
-		case MOESI_CACHE_IM: do_snoop_IM(request); break;
-		case MOESI_CACHE_SM: do_snoop_SM(request); break;
 		case MOESI_CACHE_M:  do_snoop_M(request);  break;
 		case MOESI_CACHE_O:  do_snoop_O(request);  break;
+		case MOESI_CACHE_IS: do_snoop_IS(request); break;
+		case MOESI_CACHE_IM: do_snoop_IM(request); break;
+		case MOESI_CACHE_SM: do_snoop_SM(request); break;
 		case MOESI_CACHE_OM: do_snoop_OM(request); break;
 		default:
 				     fatal_error ("Invalid Cache State for MOESI Protocol\n");
@@ -141,7 +141,7 @@ inline void MOESI_protocol::do_cache_O (Mreq *request)
 	}
 }
 
-inline void MOESI_protocol::do_cache_IS (Mreq *request)
+inline void MOESI_protocol::do_cache_X (Mreq *request)
 {
 	switch (request->msg) {
 		case LOAD:
@@ -151,49 +151,7 @@ inline void MOESI_protocol::do_cache_IS (Mreq *request)
 			break;
 		default:
 			request->print_msg (my_table->moduleID, "ERRIR");
-			fatal_error ("Client: IS state shouldn't see this message\n");
-	}
-}
-
-inline void MOESI_protocol::do_cache_IM (Mreq *request)
-{
-	switch (request->msg) {
-		case LOAD:
-		case STORE:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Should only have one outstanding request per processor!");
-			break;
-		default:
-			request->print_msg (my_table->moduleID, "ERRIR");
-			fatal_error ("Client: IM state shouldn't see this message\n");
-	}
-}
-
-inline void MOESI_protocol::do_cache_SM (Mreq *request)
-{
-	switch (request->msg) {
-		case LOAD:
-		case STORE:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Should only have one outstanding request per processor!");
-			break;
-		default:
-			request->print_msg (my_table->moduleID, "ERRIR");
-			fatal_error ("Client: SM state shouldn't see this message\n");
-	}
-}
-
-inline void MOESI_protocol::do_cache_OM (Mreq *request)
-{
-	switch (request->msg) {
-		case LOAD:
-		case STORE:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Should only have one outstanding request per processor!");
-			break;
-		default:
-			request->print_msg (my_table->moduleID, "ERRIR");
-			fatal_error ("Client: OM state shouldn't see this message\n");
+			fatal_error ("Client: X state shouldn't see this message\n");
 	}
 }
 

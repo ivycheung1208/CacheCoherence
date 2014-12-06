@@ -20,20 +20,20 @@ MOSI_protocol::~MOSI_protocol ()
 
 void MOSI_protocol::dump (void)
 {
-	const char *block_states[8] = {"X","I","IS","S","IM","M","O","OM"};
+	const char *block_states[8] = {"X","I","S","M","O","IS","IM","OM"};
 	fprintf (stderr, "MOSI_protocol - state: %s\n", block_states[state]);
 }
 
 void MOSI_protocol::process_cache_request (Mreq *request)
 {
 	switch (state) {
-		case MOSI_CACHE_I:  do_cache_I(request);  break;
-		case MOSI_CACHE_IS: do_cache_IS(request); break;
-		case MOSI_CACHE_S:  do_cache_S(request);  break;
-		case MOSI_CACHE_IM: do_cache_IM(request); break;
-		case MOSI_CACHE_M:  do_cache_M(request);  break;
-		case MOSI_CACHE_O:  do_cache_O(request);  break;
-		case MOSI_CACHE_OM: do_cache_OM(request); break;
+		case MOSI_CACHE_I:  do_cache_I(request); break;
+		case MOSI_CACHE_S:  do_cache_S(request); break;
+		case MOSI_CACHE_M:  do_cache_M(request); break;
+		case MOSI_CACHE_O:  do_cache_O(request); break;
+		case MOSI_CACHE_IS:
+		case MOSI_CACHE_IM:
+		case MOSI_CACHE_OM: do_cache_X(request); break;
 		default:
 				    fatal_error ("Invalid Cache State for MOSI Protocol\n");
 	}
@@ -43,11 +43,11 @@ void MOSI_protocol::process_snoop_request (Mreq *request)
 {
 	switch (state) {
 		case MOSI_CACHE_I:  do_snoop_I(request);  break;
-		case MOSI_CACHE_IS: do_snoop_IS(request); break;
 		case MOSI_CACHE_S:  do_snoop_S(request);  break;
-		case MOSI_CACHE_IM: do_snoop_IM(request); break;
 		case MOSI_CACHE_M:  do_snoop_M(request);  break;
 		case MOSI_CACHE_O:  do_snoop_O(request);  break;
+		case MOSI_CACHE_IS: do_snoop_IS(request); break;
+		case MOSI_CACHE_IM: do_snoop_IM(request); break;
 		case MOSI_CACHE_OM: do_snoop_OM(request); break;
 		default:
 				    fatal_error ("Invalid Cache State for MOSI Protocol\n");
@@ -73,20 +73,6 @@ inline void MOSI_protocol::do_cache_I (Mreq *request)
 	}
 }
 
-inline void MOSI_protocol::do_cache_IS (Mreq *request)
-{
-	switch (request->msg) {
-		case LOAD:
-		case STORE:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Should only have one outstanding request per processor!");
-			break;
-		default:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Client: IS state shouldn't see this message\n");
-	}
-}
-
 inline void MOSI_protocol::do_cache_S (Mreq *request)
 {
 	switch (request->msg) {
@@ -101,20 +87,6 @@ inline void MOSI_protocol::do_cache_S (Mreq *request)
 		default:
 			request->print_msg (my_table->moduleID, "ERROR");
 			fatal_error ("Client: S state shouldn't see this message\n");
-	}
-}
-
-inline void MOSI_protocol::do_cache_IM (Mreq *request)
-{
-	switch (request->msg) {
-		case LOAD:
-		case STORE:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Should only have one outstanding request per processor!");
-			break;
-		default:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Client: IM state shouldn't see this message\n");
 	}
 }
 
@@ -149,7 +121,7 @@ inline void MOSI_protocol::do_cache_O (Mreq *request)
 	}
 }
 
-inline void MOSI_protocol::do_cache_OM (Mreq *request)
+inline void MOSI_protocol::do_cache_X (Mreq *request)
 {
 	switch (request->msg) {
 		case LOAD:
@@ -159,9 +131,11 @@ inline void MOSI_protocol::do_cache_OM (Mreq *request)
 			break;
 		default:
 			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Client: OM state shouldn't see this message\n");
+			fatal_error ("Client: X state shouldn't see this message\n");
 	}
 }
+
+////////////////////////////////////////////////////////////
 
 inline void MOSI_protocol::do_snoop_I (Mreq *request)
 {
@@ -173,22 +147,6 @@ inline void MOSI_protocol::do_snoop_I (Mreq *request)
 		default:
 			request->print_msg (my_table->moduleID, "ERROR");
 			fatal_error ("Client: I state shouldn't see this message\n");
-	}
-}
-
-inline void MOSI_protocol::do_snoop_IS (Mreq *request)
-{
-	switch (request->msg) {
-		case GETS:
-		case GETM:
-			break; // wait for DATA
-		case DATA:
-			send_DATA_to_proc(request->addr);
-			state = MOSI_CACHE_S;
-			break;
-		default:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Client: IS state shouldn't see this message\n");
 	}
 }
 
@@ -206,22 +164,6 @@ inline void MOSI_protocol::do_snoop_S (Mreq *request)
 		default:
 			request->print_msg (my_table->moduleID, "ERROR");
 			fatal_error ("Client: S state shouldn't see this message\n");
-	}
-}
-
-inline void MOSI_protocol::do_snoop_IM (Mreq *request)
-{
-	switch (request->msg) {
-		case GETS:
-		case GETM:
-			break; // wait for DATA
-		case DATA:
-			send_DATA_to_proc(request->addr);
-			state = MOSI_CACHE_M;
-			break;
-		default:
-			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Client: IM state shouldn't see this message\n");
 	}
 }
 
@@ -250,7 +192,6 @@ inline void MOSI_protocol::do_snoop_O (Mreq *request)
 {
 	switch (request->msg) {
 		case GETS: // supply data
-			// set_shared_line();
 			send_DATA_on_bus(request->addr, request->src_mid);
 			break;
 		case GETM: // send data on bus then invalidate
@@ -266,11 +207,42 @@ inline void MOSI_protocol::do_snoop_O (Mreq *request)
 	}
 }
 
+inline void MOSI_protocol::do_snoop_IS (Mreq *request)
+{
+	switch (request->msg) {
+		case GETS:
+		case GETM:
+			break; // wait for DATA
+		case DATA:
+			send_DATA_to_proc(request->addr);
+			state = MOSI_CACHE_S;
+			break;
+		default:
+			request->print_msg (my_table->moduleID, "ERROR");
+			fatal_error ("Client: IS state shouldn't see this message\n");
+	}
+}
+
+inline void MOSI_protocol::do_snoop_IM (Mreq *request)
+{
+	switch (request->msg) {
+		case GETS:
+		case GETM:
+			break; // wait for DATA
+		case DATA:
+			send_DATA_to_proc(request->addr);
+			state = MOSI_CACHE_M;
+			break;
+		default:
+			request->print_msg (my_table->moduleID, "ERROR");
+			fatal_error ("Client: IM state shouldn't see this message\n");
+	}
+}
+
 inline void MOSI_protocol::do_snoop_OM (Mreq *request)
 {
 	switch (request->msg) {
 		case GETS: // supply data
-			// set_shared_line();
 			send_DATA_on_bus(request->addr, request->src_mid);
 			break;
 		case GETM: // send data on bus then switch to IM state and wait for data
@@ -282,7 +254,7 @@ inline void MOSI_protocol::do_snoop_OM (Mreq *request)
 			break;
 		default:
 			request->print_msg (my_table->moduleID, "ERROR");
-			fatal_error ("Client: O state shouldn't see this message\n");
+			fatal_error ("Client: OM state shouldn't see this message\n");
 	}
 }
 
