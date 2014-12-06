@@ -1,0 +1,112 @@
+protocols/
+protocols/MOSI_protocol.d
+protocols/MI_protocol.d
+protocols/MOESI_protocol.h
+protocols/MOESIF_protocol.h
+protocols/messages.cpp
+protocols/MSI_protocol.cpp
+protocols/MOSI_protocol.cpp
+protocols/MOESI_protocol.cpp
+protocols/MOESIF_protocol.d
+protocols/MOESIF_protocol.cpp
+protocols/MSI_protocol.h
+protocols/MSI_protocol.d
+protocols/MI_protocol.cpp
+protocols/MOSI_protocol.h
+protocols/MOESI_protocol.d
+protocols/MI_protocol.h
+protocols/MESI_protocol.d
+protocols/MESI_protocol.h
+protocols/makefile
+protocols/MESI_protocol.cpp
+protocols/protocol.d
+protocols/messages.h
+protocols/protocol.cpp
+protocols/protocol.h
+protocols/messages.d
+echo cleaning up in .
+cleaning up in .
+rm -f sim_trace  lib/libprotocols.a lib/libsim.a 
+for d in protocols sim; do (cd $d; make clean ); done
+make[1]: Entering directory `/home/ivy/Documents/cachecoherence/project3/protocols'
+rm -rf *~ ../lib/libprotocols.a *.d *.o
+make[1]: Leaving directory `/home/ivy/Documents/cachecoherence/project3/protocols'
+make[1]: Entering directory `/home/ivy/Documents/cachecoherence/project3/sim'
+rm -rf *~ ../lib/libsim.a *.d *.o
+make[1]: Leaving directory `/home/ivy/Documents/cachecoherence/project3/sim'
+true
+cd protocols; make 
+make[1]: Entering directory `/home/ivy/Documents/cachecoherence/project3/protocols'
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM messages.cpp > messages.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM MI_protocol.cpp > MI_protocol.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM MSI_protocol.cpp > MSI_protocol.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM MESI_protocol.cpp > MESI_protocol.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM MOSI_protocol.cpp > MOSI_protocol.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM MOESI_protocol.cpp > MOESI_protocol.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM MOESIF_protocol.cpp > MOESIF_protocol.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM protocol.cpp > protocol.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c messages.cpp -o  messages.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c MI_protocol.cpp -o  MI_protocol.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c MSI_protocol.cpp -o  MSI_protocol.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c MESI_protocol.cpp -o  MESI_protocol.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c MOSI_protocol.cpp -o  MOSI_protocol.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c MOESI_protocol.cpp -o  MOESI_protocol.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c MOESIF_protocol.cpp -o  MOESIF_protocol.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c protocol.cpp -o  protocol.o
+ar r ../lib/libprotocols.a  messages.o  MI_protocol.o  MSI_protocol.o  MESI_protocol.o  MOSI_protocol.o  MOESI_protocol.o  MOESIF_protocol.o  protocol.o
+ranlib ../lib/libprotocols.a
+make[1]: Leaving directory `/home/ivy/Documents/cachecoherence/project3/protocols'
+cd sim; make 
+make[1]: Entering directory `/home/ivy/Documents/cachecoherence/project3/sim'
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM bus.cpp > bus.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM hash_table.cpp > hash_table.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM main.cpp > main.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM memory.cpp > memory.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM module.cpp > module.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM mreq.cpp > mreq.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM node.cpp > node.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM processor.cpp > processor.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM settings.cpp > settings.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM sharers.cpp > sharers.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -MM sim.cpp > sim.d 
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c bus.cpp -o  bus.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c hash_table.cpp -o  hash_table.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c main.cpp -o  main.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c memory.cpp -o  memory.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c module.cpp -o  module.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c mreq.cpp -o  mreq.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c node.cpp -o  node.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c processor.cpp -o  processor.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c settings.cpp -o  settings.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c sharers.cpp -o  sharers.o
+g++ -g -Wall -fno-strict-aliasing -Wno-non-virtual-dtor -c sim.cpp -o  sim.o
+ar r ../lib/libsim.a  bus.o  hash_table.o  main.o  memory.o  module.o  mreq.o  node.o  processor.o  settings.o  sharers.o  sim.o
+ranlib ../lib/libsim.a
+make[1]: Leaving directory `/home/ivy/Documents/cachecoherence/project3/sim'
+g++ -o sim_trace  -Llib/ -lsim -lprotocols
+-----------------------------
+Verifying protocol: MSI
+traces/4proc_validation: PASS
+traces/8proc_validation: PASS
+traces/16proc_validation: PASS
+-----------------------------
+Verifying protocol: MESI
+traces/4proc_validation: PASS
+traces/8proc_validation: PASS
+traces/16proc_validation: PASS
+-----------------------------
+Verifying protocol: MOSI
+traces/4proc_validation: PASS
+traces/8proc_validation: PASS
+traces/16proc_validation: PASS
+-----------------------------
+Verifying protocol: MOESI
+traces/4proc_validation: PASS
+traces/8proc_validation: PASS
+traces/16proc_validation: PASS
+-----------------------------
+Verifying protocol: MOESIF
+traces/4proc_validation: PASS
+traces/8proc_validation: PASS
+traces/16proc_validation: PASS
+-----------------------------
